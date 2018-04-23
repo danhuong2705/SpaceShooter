@@ -34,11 +34,6 @@ public class BossWeaponController : MonoBehaviour {
         if (enemyShip.activeInHierarchy)
         {
             List<GameObject> obj = NewObjectPooled.current.GetBossBolt();
-            //GameObject obj = NewObjectPooled.current.GetBoltsEnemy();
-            //if (obj == null) return;
-            //obj.transform.position = shotSpawn.position;
-            //obj.transform.rotation = shotSpawn.rotation;
-            //obj.SetActive(true);
             int count = 0;
             foreach (var shotSpawn in shotSpawns)
             {

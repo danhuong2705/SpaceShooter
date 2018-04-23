@@ -39,25 +39,25 @@ public class DestroyByContact : MonoBehaviour {
     {
         CancelInvoke();
     }
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.CompareTag("Boundary") || other.CompareTag("Enemy"))
-    //    {
-    //        return;
-    //    }
-    //    if (explosions != null)
-    //    {
-    //            Instantiate(explosions, transform.position, transform.rotation);
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Boundary") || other.CompareTag("Enemy") || other.CompareTag("boss"))
+        {
+            return;
+        }
+        if (explosions != null)
+        {
+            Instantiate(explosions, transform.position, transform.rotation);
 
-    //    }
-    //    if (other.tag == "Player")
-    //    {
-    //        Instantiate(playerExplosions, other.transform.position, other.transform.rotation);
-    //        gameController.GameOver();
-    //    }
-    //    gameController.AddScore(scoreValue);
-    //    DestroyContact(other.gameObject);
-    //    DestroyContact(gameObject);
-    //}
+        }
+        if (other.tag == "Player")
+        {
+            Instantiate(playerExplosions, other.transform.position, other.transform.rotation);
+            gameController.GameOver();
+        }
+        gameController.AddScore(scoreValue);
+        DestroyContact(other.gameObject);
+        DestroyContact(gameObject);
+    }
 
 }

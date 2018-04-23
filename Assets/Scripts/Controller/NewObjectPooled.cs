@@ -22,6 +22,7 @@ public class NewObjectPooled : MonoBehaviour {
     private List<GameObject> enemys;
     private List<GameObject> boltsEmeny;
     private List<GameObject> bossBolt;
+    GameController gameController;
 	void Awake()
     {
         current = this;
@@ -32,6 +33,15 @@ public class NewObjectPooled : MonoBehaviour {
         enemys = new List<GameObject>();
         boltsEmeny = new List<GameObject>();
         bossBolt = new List<GameObject>();
+        GameObject gameControllerObject = GameObject.FindWithTag("GameController");
+        if (gameControllerObject != null)
+        {
+            gameController = gameControllerObject.GetComponent<GameController>();
+        }
+        if (gameController == null)
+        {
+            Debug.Log("Cannot find 'GameController script'");
+        }
         for (int i=0;i< boltAmount; i++)
         {
             GameObject obj = (GameObject)Instantiate(bolt);
@@ -60,6 +70,7 @@ public class NewObjectPooled : MonoBehaviour {
             obj.SetActive(false);
             bossBolt.Add(obj);
         }
+      //  gameController.gameOver = false;
     }
 	
     public List<GameObject> GetPooledObject()
@@ -122,8 +133,10 @@ public class NewObjectPooled : MonoBehaviour {
         return null;
     }
     public GameObject GetEnemys()
-    { 
-        while (true)
+    {
+       
+     
+        while(!gameController.gameOver)
         {
             GameObject hazard = enemys[Random.Range(0, hazards.Length)];
             if (!hazard.activeInHierarchy)
@@ -131,5 +144,8 @@ public class NewObjectPooled : MonoBehaviour {
                 return hazard;
             }
         }
+        return null;
+
+  
     }
 }

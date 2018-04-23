@@ -21,7 +21,6 @@ public class BossEvasiveManeuver : MonoBehaviour {
     private float speed;
 
     private Transform playerTransform;
-    private float currentSpeed;
     private Vector3 targetManeuver;
     private Rigidbody rb;
     Vector3 velocity;
@@ -29,8 +28,10 @@ public class BossEvasiveManeuver : MonoBehaviour {
     
     void Start () {
         rb = GetComponent<Rigidbody>();
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        currentSpeed = rb.velocity.z;
+        if (!GameController.current.gameOver)
+        {
+            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        }
         StartCoroutine(Evade());
 	}
 	
@@ -42,8 +43,6 @@ public class BossEvasiveManeuver : MonoBehaviour {
             if (playerTransform != null) {
                 targetManeuver = playerTransform.position;
                 yield return new WaitForSeconds(Random.Range(maneuverTime.x, maneuverTime.y));
-             //   targetManeuver = new Vector3(0,0,0);
-             //   yield return new WaitForSeconds(Random.Range(maneuverWait.x, maneuverWait.y));
             }
            
            
@@ -52,12 +51,11 @@ public class BossEvasiveManeuver : MonoBehaviour {
 
     private void FixedUpdate()
     {
-     
         float z = playerTransform.position.z * -1/5;
         float newManeuver = Mathf.MoveTowards(rb.velocity.x, targetManeuver.x, Time.deltaTime * smoothing);
         velocity.x = newManeuver;
         velocity.y = 0.0f;
-        velocity.z = currentSpeed*z;
+        velocity.z = -z*2;
         rb.velocity = velocity;
 
         position.x = Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax);

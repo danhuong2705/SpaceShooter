@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour {
     {
         List<GameObject> obj = NewObjectPooled.current.GetPooledObject();
         if (obj == null) return;
-        if (Input.GetButton("Fire1"))
+        if (Input.GetButton("Fire1") && gameObject.activeInHierarchy)
         {
                    int count = 0;
                    foreach (var shotSpawn in shotSpawns)
