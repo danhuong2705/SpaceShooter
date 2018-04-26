@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -33,7 +34,14 @@ public class GameController : MonoBehaviour
     Vector3 position;
     bool isBossAppear;
     public static GameController current;
-   
+    [SerializeField]
+    private InputField inputName;
+    [SerializeField]
+    private Button btnPause;
+    [SerializeField]
+    private Sprite imagePause;
+    [SerializeField]
+    private Sprite imagePlay;
     //  Slider slider = FightBoss.current.bloodSlider;
     // Use this for initialization
     void Awake()
@@ -42,7 +50,8 @@ public class GameController : MonoBehaviour
     }
     void Start()
     {
-      
+        GameObject img = btnPause.transform.Find("Image").gameObject;
+        img.GetComponent<Image>().sprite = imagePause;
         gameOver = false;
         restart = false;
         isBossAppear = false;
@@ -68,6 +77,7 @@ public class GameController : MonoBehaviour
         {
             slider.gameObject.SetActive(false);
         }
+
     }
 
 
@@ -81,37 +91,22 @@ public class GameController : MonoBehaviour
         {
             if (!gameOver && !isBossAppear)
             {
-                GameObject hazard = NewObjectPooled.current.GetEnemys();
-                position.x = Random.Range(-spawnValue.x, spawnValue.x);
-                position.y = spawnValue.y;
-                position.z = spawnValue.z;
-                Vector3 spawnPosition = position;
-        
-                Quaternion spawnRotation = Quaternion.identity;
-                hazard.transform.position = spawnPosition;
-                hazard.transform.rotation = spawnRotation;
-                hazard.SetActive(true);
-                if (score >= 50)
+                if(score < 50)
                 {
-                    GameObject hazard1 = NewObjectPooled.current.GetEnemys();
-                    position.x = Random.Range(-spawnValue.x, spawnValue.x);
-                    position.y = spawnValue.y;
-                    position.z = spawnValue.z;
-                    Vector3 spawnPosition1 = position;
-                
-                    Quaternion spawnRotation1 = Quaternion.identity;
-                    hazard1.transform.position = spawnPosition1;
-                    hazard1.transform.rotation = spawnRotation1;
-                    hazard1.SetActive(true);
+                    GetHazards(1);
                 }
-                if (score >= 100)
+                else if(score >=50 && score <=100)
+                {
+                    GetHazards(2);
+                }
+                else
+                {
+                    GetHazards(3);
+                }
+                if (score >= 200)
                 {
                     CancelInvoke();
-
-                    isBossAppear = true;
-                   
-                    
-                   
+                    isBossAppear = true;     
                 }
 
                 if (isBossAppear)
@@ -124,7 +119,7 @@ public class GameController : MonoBehaviour
             if (gameOver)
             {
                 CancelInvoke();
-                restartText.text = "Press 'R' for Restart";
+              
                 restart = true;
             }
         }
@@ -133,17 +128,33 @@ public class GameController : MonoBehaviour
             CancelInvoke();
         }
     }
+void GetHazards(int n)
+    {
+        for(int i = 0; i < n; i++)
+        {
+            GameObject hazard = NewObjectPooled.current.GetEnemys();
+            position.x = Random.Range(-spawnValue.x, spawnValue.x);
+            position.y = spawnValue.y;
+            position.z = spawnValue.z;
+            Vector3 spawnPosition = position;
 
+            Quaternion spawnRotation = Quaternion.identity;
+            hazard.transform.position = spawnPosition;
+            hazard.transform.rotation = spawnRotation;
+            hazard.SetActive(true);
+        }
+       
+
+    }
 
 void FightBoss()
     {
-        position.x = Random.Range(-spawnValue.x, spawnValue.x);
-        position.y = spawnValue.y;
-        position.z = spawnValue.z;
-        Vector3 spawnPosition1 = position;
-        Quaternion spawnRotation1 = Quaternion.identity;
-        boss.transform.position = position;
-        boss.transform.rotation = spawnRotation1;
+        //position.x = 0;
+        //position.y = 0;
+        //position.z = 16;
+        //boss.transform.position = position;
+        //Quaternion spawnRotation = Quaternion.identity;
+      //  boss.transform.rotation = spawnRotation;
         slider.gameObject.SetActive(true);
         boss.gameObject.SetActive(true);
       
@@ -159,11 +170,73 @@ void FightBoss()
     {
         ScoreText.text = "score: " + score;
     }
-
+    public void Restart()
+    {
+        restartText.text = "Press 'R' for Restart";
+    }
     public void GameOver()
     {
         gameOverText.text = "Game Over!";
         gameOver = true;
+     //   InputName();
+        Restart(); 
     }
+    void InputName()
+    {
+        List<HighScore> listHighScore = GetHighScores.current.GetHighScoreList();
+        if (listHighScore.Count <= 0)
+        {
+            inputName.gameObject.SetActive(true);
+        }
+        else
+        {
+            for (int i = 0; i < listHighScore.Count; i++)
+            {
+                if (score > listHighScore[i].Score)
+                {
+                    inputName.gameObject.SetActive(true);
+                }
+            }
+        }
+       
+    }
+    bool paused = false;
 
+ 
+    public void OnBtnPauseClick()
+    {
+       
+            paused = togglePause();
+    }
+    //void OnGUI()
+    //{
+    //    if (paused)
+    //    {
+    //        GUILayout.Label("Game is paused!");
+    //        if (GUILayout.Button("Click me to unpause"))
+    //            paused = togglePause();
+    //    }
+    //}
+
+    bool togglePause()
+    {
+        if (Time.timeScale == 0f)
+        {
+            Time.timeScale = 1f;
+            GameObject img = btnPause.transform.Find("Image").gameObject;
+            img.GetComponent<Image>().sprite = imagePause;
+            SceneManager.LoadScene("Main");
+            return (false);
+            
+
+        }
+        else
+        {
+            Time.timeScale = 0f;
+            GameObject img = btnPause.transform.Find("Image").gameObject;
+            img.GetComponent<Image>().sprite = imagePlay ;
+            SceneManager.LoadScene("HomeScreen");
+            return (true);
+        }
+    }
 }

@@ -28,10 +28,17 @@ public class BossEvasiveManeuver : MonoBehaviour {
     
     void Start () {
         rb = GetComponent<Rigidbody>();
+       
         if (!GameController.current.gameOver)
         {
             playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         }
+        position.x = 0;
+        position.y = 0;
+        position.z = 16;
+        rb.position = position;
+        rb.velocity = new Vector3(5,0,5);
+        rb.rotation = Quaternion.identity;
         StartCoroutine(Evade());
 	}
 	

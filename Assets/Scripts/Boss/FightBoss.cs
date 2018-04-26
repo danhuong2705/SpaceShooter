@@ -10,6 +10,8 @@ public class FightBoss : MonoBehaviour {
     private GameObject playerExplosions;
     [SerializeField]
     private int scoreValue;
+    [SerializeField]
+    private Text winText;
     public Slider bloodSlider;
     public static FightBoss current;
     private GameController gameController;
@@ -49,7 +51,11 @@ public class FightBoss : MonoBehaviour {
             Instantiate(playerExplosions, transform.position, transform.rotation);
              DestroyContact(gameObject);
             if (!gameObject.activeInHierarchy)
-               gameController.AddScore(500);
+            {
+                gameController.AddScore(500);
+                winText.text = "You Win!";
+                gameController.Restart();
+            }
 
         }
             if (other.tag == "Player")

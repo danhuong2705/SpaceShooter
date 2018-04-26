@@ -5,6 +5,7 @@ using UnityEngine;
 public class Boundary
 {
     public float xMin, xMax, zMin, zMax;
+
 }
 public class PlayerController : MonoBehaviour {
     [SerializeField]
@@ -23,13 +24,21 @@ public class PlayerController : MonoBehaviour {
     private float fireRate;
     private float nextFire;
     private int[] arr = { -1, 0, 1 };
-
+    float leftBorder, rightBorder, topBorder, buttomBorder;
+    float dist,dist1;
     void Start()
     {
 
         rb = GetComponent<Rigidbody>();
         audio = GetComponent<AudioSource>();
        InvokeRepeating("Fire", 0.05f, 0.05f);
+
+        leftBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).x + 0.5f;
+        rightBorder = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, 0)).x - 0.5f;
+    
+     //    topBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).z*(-1);
+     //   buttomBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0,0 )).z;
+
     }
     void Fire()
     {
@@ -65,13 +74,20 @@ public class PlayerController : MonoBehaviour {
         movement.y = 0.0f;
         movement.z = moveVertical;
         rb.velocity = movement * speed;
-        limitArea.x = Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax);
-        limitArea.y = 0.0f;
-        limitArea.z = Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax);
-        rb.position = limitArea;
+
+
+        limitArea.x = Mathf.Clamp(transform.position.x, leftBorder, rightBorder);
+        limitArea.z = Mathf.Clamp(transform.position.z, boundary.zMin,boundary.zMax);
+
+        //limitArea.x = Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax);
+        //  limitArea.y = 0.0f;
+        //limitArea.z = Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax);
+          rb.position = limitArea;
         rotation.x = 0.0f;
         rotation.y = 0.0f; ;
         rotation.z = rb.velocity.x * -tilt;
         rb.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * -tilt);
-	}
+    
+
+    }
 }
